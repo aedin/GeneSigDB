@@ -155,16 +155,3 @@ getMart<-function(ds="hsapiens_gene_ensembl"){
   }
     return(mart)
 }
-
-
-if (x== "UniGene ID") parseUniGeneID
-if (x== "miRBase") parsemiRBase()
-if(x=="Protein ID") parseProteinID()
-if(x=="RefSeq ID") parseRedSeqID()
-if(x=="Probe ID") parseProbeID()
-if(x=="Secondary Probe ID") parseSecondaryProbeID()
-if (x=="Gene Description") parseNULL(ids)
-if (x=="Other Gene Description") parseNULL(ids)
-if (x=="Geneset Specific Factor") parseNULL(ids)
-if (x=="Geneset Specific Statistics") parseNULL(ids)
-if (x=="Chromosome Map") parseNULL(ids)      
