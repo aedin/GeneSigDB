@@ -80,6 +80,7 @@ parseSigCols<-function(SigID, GeneSigIndex,...) {
       }
 
 
+
 parseCloneID<-function() {
    # 1. Check format looks correct
    # 2. search
@@ -196,8 +197,13 @@ parseProbeID<-function(ids, biomart=TRUE) {
     return(mapping)
   }
   }
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> aedin/master
 parseSecondaryProbeID<-function(ids, biomart=TRUE) {
   # validateIDs
   
