@@ -6,7 +6,7 @@
 readGeneSigDBFile<-function(GeneSigDBPath=GeneSigDBdata,GeneSigDBFileName="GeneSigDB-Table 1.csv") {
   # Function to Read Gene SigDB File(shows the entire GeneSigDB)
   # To call this function type: readGeneSigDBFile(GeneSigDBdata,GeneSigDBFileName)
- 
+
    GSdb= NULL
   SigFile= file.path(GeneSigDBdata, GeneSigDBFileName)
    if (file.exists(SigFile)){
@@ -17,20 +17,20 @@ readGeneSigDBFile<-function(GeneSigDBPath=GeneSigDBdata,GeneSigDBFileName="GeneS
 }
 
 
-getSig<- function(SigID,GeneSigIndex,...) 
+getSig<- function(SigID,GeneSigIndex,...)
   {
 # Example SigID = "10582678-Table1"
-  
+
 # To call this function (executing it)
 # getSig(SigID,GeneSigDBData=GeneSigDBData)
-# 
-  
-#GeneSigIndex is the GeneSigdb.xls file read using readGeneSigDBFile(GeneSigDBPath,GeneSigDBFileName) 
+#
+
+#GeneSigIndex is the GeneSigdb.xls file read using readGeneSigDBFile(GeneSigDBPath,GeneSigDBFileName)
 # It turns a data.frame of the signature
-  
+
   rowInd= GeneSigIndex$SigID==SigID
   print(table(rowInd))
-  
+
   SigFilePath=file.path(GeneSigDBData,GeneSigIndex$Release[rowInd], GeneSigIndex$PMID[rowInd], GeneSigIndex$FileAssociated[rowInd])
   print(SigFilePath)
 
@@ -47,38 +47,55 @@ getSig<- function(SigID,GeneSigIndex,...)
 parseSigCols<-function(SigID, GeneSigIndex,...) {
 ## Extract Cols from Sig
 
-# GeneSigIndex is the GeneSigdb.xls file read using readGeneSigDBFile(GeneSigDBPath,GeneSigDBFileName) 
+# GeneSigIndex is the GeneSigdb.xls file read using readGeneSigDBFile(GeneSigDBPath,GeneSigDBFileName)
 # It turns a data.frame of the signature
-  
+
   rowInd= GeneSigIndex$SigID==SigID
 # Get cols
   colInd=grep("^Column\\d+", colnames(GeneSigIndex))
   SigCols= GeneSigIndex[rowInd, colInd]
   SigCols<- SigCols[!c(is.na(SigCols)| SigCols=="")]
-  
+
   sig<-getSig(SigID,GeneSigIndex)
 }
-  
-  lapply(seq_along(SigCols)), function(x){
-    ids=sig[,x]
-    if (x=="Clone ID")  parseCloneID(ids)
-    if (x=="EnsEMBL ID") parseEnsEnsEMBL(ids)
-    if (x=="GenBank ID") parseGenBankID(ids) 
-    if (x=="Gene Symbol") parseGeneSymbol(ids) 
-    if (x=="EntrezGene ID") parseEntrezGeneID(ids)
-    if (x=="UniGene ID") parseUniGeneID(ids)
-    if (x=="miRBase") parsemiRBase(ids)
-    if (x=="Protein ID") parseProteinID(ids)
-    if (x=="RefSeq ID") parseRedSeqID(ids)
-    if (x=="Probe ID") parseProbeID(ids)
-    if (x=="Secondary Probe ID") parseSecondaryProbeID(ids)
-    if (x=="Gene Description") parseNULL(ids)
-    if (x=="Other Gene Description") parseNULL(ids)
-    if (x=="Geneset Specific Factor") parseNULL(ids)
-    if (x=="Geneset Specific Statistics") parseNULL(ids)
-    if (x=="Chromosome Map") parseNULL(ids)                                
-      }
 
+#' Function to convert identifiers
+#'
+#' @param ids is a character vector of gene or protein identifiers
+#' @param Identifer is a character indicating the identifer types, eg "EnsEMBL ID", "Gene Symbol", "EntrezGene ID" etc
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' ids =c("IL6", "TP53", "SOX8")
+#' mart=getMart("human")
+#' parseIDs(ids, Identifer="Gene Symbol")
+#'
+parseIDs<-function(ids=Sig[,2], identifer="Gene Symbol", ...) {
+    mapIds<-switch(identifer,
+       "Clone ID"=parseCloneID(ids),
+       "EnsEMBL ID"= parseEnsEnsEMBL(ids),
+       "GenBank ID"= parseGenBankID(ids),
+       "Gene Symbol"= parseGeneSymbol(ids),
+       "EntrezGene ID"= parseEntrezGeneID(ids),
+       "UniGene ID"= parseUniGeneID(ids),
+       "miRBase"= parsemiRBase(ids),
+       "Protein ID"= parseProteinID(ids),
+       "RefSeq ID"= parseRedSeqID(ids),
+       "Probe ID"= parseProbeID(ids)
+    )
+
+    # .parseNull returns NULL. These ids are not searched
+    if (x=="Secondary Probe ID") .parseNULL(ids)
+    if (x=="Gene Description") .parseNULL(ids)
+    if (x=="Other Gene Description") .parseNULL(ids)
+    if (x=="Geneset Specific Factor") .parseNULL(ids)
+    if (x=="Geneset Specific Statistics") .parseNULL(ids)
+    if (x=="Chromosome Map") .parseNULL(ids)
+
+}
 
 
 parseCloneID<-function() {
@@ -89,12 +106,12 @@ parseCloneID<-function() {
 
 parseEnsEnsEMBL<-function(ids, biomart=TRUE) {
   # validateIDs
-  
+
   if(biomart){
     #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
     mart<-getMart()
     #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("ensembl_gene_id", 	"entrezgene", "hgnc_symbol"), values=ids, 
+    mapping<-getBM(attributes= c("ensembl_gene_id", 	"entrezgene", "hgnc_symbol"), values=ids,
                    filters="ensembl_gene_id", mart=mart)
     return(mapping)
   }
@@ -109,15 +126,15 @@ parseGenBankID<-function(ids, biomart=TRUE) {
     return(mapping)
   }
   }
-  
+
 parseGeneSymbol<- function(ids, biomart=TRUE) {
   if(biomart){
     #selecting for ("ensembl_gene_id","embl","entrezgene", "hgnc_symbol")
     mart<-getMart()
     #mapping<-biomaRt::select(mart, keys=ids, columns=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, filters="embl", mart=mart)
+    mapping<-getBM(attributes= c("hgnc_symbol", "ensembl_gene_id",	"entrezgene"), values=ids, filters="hgnc_symbol", mart=mart)
     return(mapping)
-    
+
   }
   }
 parseEntrezGeneID<- function(ids, biomart=TRUE) {
@@ -133,12 +150,12 @@ parseEntrezGeneID<- function(ids, biomart=TRUE) {
 
 parseUniGeneID<-function(ids, biomart=TRUE) {
   # validateIDs
-  
+
   if(biomart){
     #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
     mart<-getMart()
     #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids,
                    filters="embl", mart=mart)
     return(mapping)
   }
@@ -146,12 +163,12 @@ parseUniGeneID<-function(ids, biomart=TRUE) {
 
 parsemiRBase<-function(ids, biomart=TRUE) {
   # validateIDs
-  
+
   if(biomart){
     #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
     mart<-getMart()
     #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids,
                    filters="embl", mart=mart)
     return(mapping)
   }
@@ -160,12 +177,12 @@ parsemiRBase<-function(ids, biomart=TRUE) {
 
 parseProteinID<-function(ids, biomart=TRUE) {
   # validateIDs
-  
+
   if(biomart){
     #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
     mart<-getMart()
     #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids,
                    filters="embl", mart=mart)
     return(mapping)
   }
@@ -173,12 +190,12 @@ parseProteinID<-function(ids, biomart=TRUE) {
 
 parseRefSeqID<-function(ids, biomart=TRUE) {
   # validateIDs
-  
+
   if(biomart){
     #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
     mart<-getMart()
     #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids,
                    filters="embl", mart=mart)
     return(mapping)
   }
@@ -187,121 +204,62 @@ parseRefSeqID<-function(ids, biomart=TRUE) {
 
 parseProbeID<-function(ids, biomart=TRUE) {
   # validateIDs
-  
+
   if(biomart){
     #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
     mart<-getMart()
     #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
-                   filters="embl", mart=mart)
-    return(mapping)
-  }
-  }
-<<<<<<< HEAD
-
-
-=======
-
-
->>>>>>> aedin/master
-parseSecondaryProbeID<-function(ids, biomart=TRUE) {
-  # validateIDs
-  
-  if(biomart){
-    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
-    mart<-getMart()
-    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids,
                    filters="embl", mart=mart)
     return(mapping)
   }
   }
 
-parseGeneDescription<-function(ids, biomart=TRUE) {
-  # validateIDs
-  
-  if(biomart){
-    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
-    mart<-getMart()
-    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
-                   filters="embl", mart=mart)
-    return(mapping)
-  }
-  }
 
-parseOtherGeneDescription<-function(ids, biomart=TRUE) {
-  # validateIDs
-  
-  if(biomart){
-    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
-    mart<-getMart()
-    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
-                   filters="embl", mart=mart)
-    return(mapping)
-  }
-  }
+.parseNULL<-function (ids) {
+  return(NULL)
+}
 
-parseGenesetSpecificfactor<-function(ids, biomart=TRUE) {
-  # validateIDs
-  
-  if(biomart){
-    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
-    mart<-getMart()
-    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
-                   filters="embl", mart=mart)
-    return(mapping)
-  }
-  }
 
-parseGenesetSpecificStatistics<-function(ids, biomart=TRUE) {
-  # validateIDs
-  
-  if(biomart){
-    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
-    mart<-getMart()
-    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
-                   filters="embl", mart=mart)
-    return(mapping)
-  }
-  }
+#' Function to define biomart Mart dataset
+#'
+#' @param species is character, human, mouse, rat or chicken. Default is human
+#' @param force is logical. Default is TRUE. If set to FALSE getMart will not create a new mart, if an object calls mart exists in the workspace
+#'
+#' @return  object of class biomarRt:::Mart
+#' @export
+#'
+#' @examples
+#' mart<- getMart("human")
+#' class(mart)
+#' mart<- getMart("mouse", force=FALSE)
 
-parseChromosomeMap<-function(ids, biomart=TRUE) {
-  # validateIDs
-  
-  if(biomart){
-    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
-    mart<-getMart()
-    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
-                   filters="embl", mart=mart)
-    return(mapping)
-  }
-  }
-##############################
-getMart<-function(ds="hsapiens_gene_ensembl"){
-  #mart<-useMart(dataset="hsapiens_gene_ensembl", biomart="ensembl")
-  #mart<-useMart(dataset="rnorvegicus_gene_ensembl", biomart="ensembl")  # maybe wrong
-  #mart<-useMart(dataset="musculus_gene_ensembl", biomart="ensembl") # maybe wrong
-  #listAttributes()
-  require(biomaRt)
-  #listDatasets()
-  if (!exists("mart")) {
-    mart<-useMart(dataset=ds, biomart="ensembl") 
-  }
+getMart<-function(species="human", force=TRUE){
+
+    require(biomaRt)
+    # Force will create a new mart object even if one exists in the current workspace.  To avoid creating a new mart, set force=FALSE
+    if (exists("mart")) {
+      print("an object  'mart' exists in your workspace")
+   }
+  if (force==TRUE | !exists("mart")){
+  mart<- switch(species,
+       mouse= useMart("ENSEMBL_MART_ENSEMBL",dataset="mmusculus_gene_ensembl", host="www.ensembl.org"),
+       human= useMart("ENSEMBL_MART_ENSEMBL",dataset="hsapiens_gene_ensembl", host="www.ensembl.org"),
+     chicken= useMart("ENSEMBL_MART_ENSEMBL",dataset="ggallus_gene_ensembl", host="www.ensembl.org"),
+    rat= useMart("ENSEMBL_MART_ENSEMBL",dataset="rnorvegicus_gene_ensembl", host="www.ensembl.org")
+   )}
     return(mart)
   }
-###############################
-if (search="AnnotationDBI")  {
-  # ALTERNATIVE
-  # Using Annotation dbi
-  require(org.Hs.eg.db)
-  columns(org.Hs.eg.db)
-  #Annotation DBi, you are selecting for Accession numbers, ensembl id, entrezid, symbol
-  #keytype is Accession Number
-  mapping<- AnnotationDbi::select(org.Hs.eg.db, keys = ids, columns= c("ACCNUM","ENSEMBL"  ,"ENTREZID", "SYMBOL" ), keytype = "ACCNUM")
-  return(mapping)
-  }
+
+
+
+# if (search="AnnotationDBI")  {
+#   # ALTERNATIVE
+#   # Using Annotation dbi
+#   require(org.Hs.eg.db)
+#   columns(org.Hs.eg.db)
+#   #Annotation DBi, you are selecting for Accession numbers, ensembl id, entrezid, symbol
+#   #keytype is Accession Number
+#   mapping<- AnnotationDbi::select(org.Hs.eg.db, keys = ids, columns= c("ACCNUM","ENSEMBL"  ,"ENTREZID", "SYMBOL" ), keytype = "ACCNUM")
+#   return(mapping)
+#   }
