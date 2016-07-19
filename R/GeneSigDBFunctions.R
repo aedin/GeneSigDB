@@ -25,7 +25,7 @@ getSig<- function(SigID,GeneSigIndex,...)
 # getSig(SigID,GeneSigDBData=GeneSigDBData)
 # 
   
-GeneSigIndex is the GeneSigdb.xls file read using readGeneSigDBFile(GeneSigDBPath,GeneSigDBFileName) 
+#GeneSigIndex is the GeneSigdb.xls file read using readGeneSigDBFile(GeneSigDBPath,GeneSigDBFileName) 
 # It turns a data.frame of the signature
   
   rowInd= GeneSigIndex$SigID==SigID
@@ -59,7 +59,7 @@ parseSigCols<-function(SigID, GeneSigIndex,...) {
   sig<-getSig(SigID,GeneSigIndex)
 }
   
-  lapply(seq_along(SigCols), function(x){
+  lapply(seq_along(SigCols)), function(x){
     ids=sig[,x]
     if (x=="Clone ID")  parseCloneID(ids)
     if (x=="EnsEMBL ID") parseEnsEnsEMBL(ids)
@@ -86,7 +86,7 @@ parseCloneID<-function() {
   return("CloneID")
 }
 
-parseEnsEnsEMBL<-function(ids, biomart=TRUE, ...) {
+parseEnsEnsEMBL<-function(ids, biomart=TRUE) {
   # validateIDs
   
   if(biomart){
@@ -109,40 +109,173 @@ parseGenBankID<-function(ids, biomart=TRUE) {
   }
   }
   
-
-
-parseGeneSymbol<- function(ids, search="biomart") {
+parseGeneSymbol<- function(ids, biomart=TRUE) {
   if(biomart){
     #selecting for ("ensembl_gene_id","embl","entrezgene", "hgnc_symbol")
     mart<-getMart()
     #mapping<-biomaRt::select(mart, keys=ids, columns=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-    mapping<-getBM(attributes= c("ensembl_gene_id", 	"entrezgene", "hgnc_symbol"), values=ids, filters="embl", mart=mart)
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, filters="embl", mart=mart)
     return(mapping)
-    else print(paste("Can't read in", getMart, "file in", mart))
-    }
-  
-  
-}
-#################################
-parseEntrezGeneID<- function() {
-  
+    
+  }
+  }
+parseEntrezGeneID<- function(ids, biomart=TRUE) {
+  if(biomart){
+    #selecting for ("ensembl_gene_id","embl","entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columns=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
 
+
+parseUniGeneID<-function(ids, biomart=TRUE) {
+  # validateIDs
   
-}
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
+
+parsemiRBase<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
 
 
-if (search="AnnotationDBI")  {
-  # ALTERNATIVE
-  # Using Annotation dbi
-  require(org.Hs.eg.db)
-  columns(org.Hs.eg.db)
-  #Annotation DBi, you are selecting for Accession numbers, ensembl id, entrezid, symbol
-  #keytype is Accession Number
-  mapping<- AnnotationDbi::select(org.Hs.eg.db, keys = ids, columns= c("ACCNUM","ENSEMBL"  ,"ENTREZID", "SYMBOL" ), keytype = "ACCNUM")
-  return(mapping)
-}
-}
+parseProteinID<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
 
+parseRefSeqID<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
+
+
+parseProbeID<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
+
+
+parseSecondaryProbeID<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
+
+parseGeneDescription<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
+
+parseOtherGeneDescription<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
+
+parseGenesetSpecificfactor<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
+
+parseGenesetSpecificStatistics<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
+
+parseChromosomeMap<-function(ids, biomart=TRUE) {
+  # validateIDs
+  
+  if(biomart){
+    #we are selecting for "ensembl_gene_id", "embl", "entrezgene", "hgnc_symbol")
+    mart<-getMart()
+    #mapping<-biomaRt::select(mart, keys=ids, columsn=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
+    mapping<-getBM(attributes= c("embl", 	"entrezgene", "hgnc_symbol"), values=ids, 
+                   filters="embl", mart=mart)
+    return(mapping)
+  }
+  }
+##############################
 getMart<-function(ds="hsapiens_gene_ensembl"){
   #mart<-useMart(dataset="hsapiens_gene_ensembl", biomart="ensembl")
   #mart<-useMart(dataset="rnorvegicus_gene_ensembl", biomart="ensembl")  # maybe wrong
@@ -154,4 +287,15 @@ getMart<-function(ds="hsapiens_gene_ensembl"){
     mart<-useMart(dataset=ds, biomart="ensembl") 
   }
     return(mart)
-}
+  }
+###############################
+if (search="AnnotationDBI")  {
+  # ALTERNATIVE
+  # Using Annotation dbi
+  require(org.Hs.eg.db)
+  columns(org.Hs.eg.db)
+  #Annotation DBi, you are selecting for Accession numbers, ensembl id, entrezid, symbol
+  #keytype is Accession Number
+  mapping<- AnnotationDbi::select(org.Hs.eg.db, keys = ids, columns= c("ACCNUM","ENSEMBL"  ,"ENTREZID", "SYMBOL" ), keytype = "ACCNUM")
+  return(mapping)
+  }

@@ -1,0 +1,109 @@
+Platform Name,Manufacture,EnsEmbl,Description,Example,Bioconductor Package,Organism
+Affy HuEx 1_0 st v2,Affymetrix,affy_huex_1_0_st_v2,,,,Human
+Affy HuGene 1_0 st v1,Affymetrix,affy_hugene_1_0_st_v1,,,,Human
+Affy u133 x3p,Affymetrix,affy_u133_x3p,,,,Human
+affy_HC_G110,Affymetrix,affy_hc_g110,,,,Human
+affy_HG-Focus,Affymetrix,affy_hg_focus,,,,Human
+affy_HG-U95A,Affymetrix,affy_hg_u95a,,,,Human
+affy_HG-U95Av2,Affymetrix,affy_hg_u95av2,,,,Human
+affy_HG-U95B,Affymetrix,affy_hg_u95b,,,,Human
+affy_HG-U95C,Affymetrix,affy_hg_u95c,,,,Human
+affy_HG-U95D,Affymetrix,affy_hg_u95d,,,,Human
+affy_HG-U95E,Affymetrix,affy_hg_u95e,,,,Human
+affy_Hu35KsubA,Affymetrix,,,,,Human
+affy_hu35ksubb,Affymetrix,,,,,Human
+affy_hu35ksubc,Affymetrix,,,,,Human
+affy_hu35ksubd,Affymetrix,,,,,Human
+affy_Hu6800,Affymetrix,affy_hugenefl,,,,Human
+affy_HuGeneFL,Affymetrix,affy_hugenefl,,,,Human
+affy_U133_X3P,Affymetrix,affy_u133_x3p,,,,Human
+affy_U133A,Affymetrix,affy_hg_u133a,,,,Human
+affy_U133A_2,Affymetrix,affy_hg_u133a_2,,,,Human
+affy_U133B,Affymetrix,affy_hg_u133b,,,,Human
+affy_U133Plus2,Affymetrix,affy_hg_u133_plus_2,,,,Human
+Affymetrix human genome U133 (HG-U133A and HG-133B),Affymetrix,affy_hg_u133_plus_2,,,,Human
+affy_MOE430A,Affymetrix,affy_moe430a,Affymetrix's GeneChip Mouse Genome 430a arrays,,moe430a.db,Mouse
+affy_MOE430B,Affymetrix,affy_moe430b,Affymetrix's GeneChip Mouse Genome 430b arrays,,moe430b.db,Mouse
+affy_Mouse430_2,Affymetrix,affy_mouse430_2,Affymetrix's GeneChip Mouse Genome 430 2.0 arrays,,mouse4302.db,Mouse
+Affy mg u74a,Affymetrix,affy_mg_u74a,,,,Mouse
+Affy mg u74av2,Affymetrix,affy_mg_u74av2,Affymetrix's GeneChip Mouse Genome u74av2,,,Mouse
+Affy mg u74b,Affymetrix,affy_mg_u74b,,,,Mouse
+Affy mg u74bv2,Affymetrix,affy_mg_u74bv2,,,,Mouse
+Affy mg u74c,Affymetrix,affy_mg_u74c,,,,Mouse
+Affy mg u74cv2,Affymetrix,affy_mg_u74cv2,,,,Mouse
+Affymetrix Microarray moex 1 0 st v1,Affymetrix,affy_moex_1_0_st_v1,,,,Mouse
+Affymetrix Microarray mogene 1 0 st v1,Affymetrix,affy_mogene_1_0_st_v1,,,,Mouse
+Affy mouse430a 2  ,Affymetrix,affy_mouse430a_2,Affymetrix GeneChip Mouse Genome 430a 2,[e.g. 1426088_at],,Mouse
+Affy Chicken Array,Affymetrix,,,,,Chicken
+Affy rae230a,Affymetrix,affy_rae230a,Affymetrix GeneChip Rat Genome  rae230a,,rae230a.db,Rat
+Affy rae230b,Affymetrix,affy_rae230b,Affymetrix GeneChip Rat Genome  rae230b,,rae230b.db,Rat
+Affy RaEx 1_0 st v1,Affymetrix,affy_raex_1_0_st_v1,,,,Rat
+Affy RaGene 1_0 st v1,Affymetrix,affy_ragene_1_0_st_v1,,,,Rat
+Affy rae230 2,Affymetrix,affy_rae230_2,Affymetrix GeneChip Rat Genome  rae230 2.0,,rat2302.db,Rat
+Affy rg u34a,Affymetrix,affy_rg_u34a,Affymetrix GeneChip Rat Genome U34A,,rgu34a.db,Rat
+Affy rg u34b,Affymetrix,affy_rg_u34b,Affymetrix GeneChip Rat Genome U34B,,rgu34b.db,Rat
+Affy rg u34c,Affymetrix,affy_rg_u34c,Affymetrix GeneChip Rat Genome U34C,,rgu34c.db,Rat
+Affy rn u34,Affymetrix,affy_rn_u34,Affymetrix Rat Neurobiology U34 Array,,rnu34.db,Rat
+Affy rt u34,Affymetrix,affy_rt_u34,Affymetrix Rat Toxicology U34 Array,,rtu34.db,Rat
+affy_MuscleChip,Affymetrix,,,,,Human
+Affymetrix array (custom),Affymetrix,,,,,
+Affymetrix SNP chips,Affymetrix,,"Affymetrix SNP 10K. 100K, 600K etc SNP chips",,,
+Affymetrix Tiling array,Affymetrix,,"Affymetrix Tiling 2.0R, Human Promoter, Chromosome 21/22 or ENCODE array",,,Human
+Agilent Arrays (more than 1),Agilent ,agilent_wholegenome,,,,
+Agilent Human 2,Agilent,agilent_wholegenome,Agilent Human 2 cDNA Microarry Kit ,,Hgug4101a,Human
+Agilent_Human1_cDNA,Agilent,agilent_wholegenome,"Agilent Human Genome, Whole",,hgug4112a,Human
+Agilent_Human1A,Agilent,agilent_wholegenome,Agilent Human 1A (V2),,Hgug4110b,Human
+Agilent_Human1Av2,Agilent,agilent_wholegenome,Agilent Human 1B,,hgug4111a,Human
+Agilent_Human1B,Agilent,agilent_wholegenome,Agilent Human 1 cDNA Microarray Kit ,,Hgug4100a,Human
+Agilent_HumanGenome,Agilent,agilent_wholegenome,,,Hguatlas13k,Human
+Agilent rat oligonucleotide microarrays,Agilent,agilent_wholegenome,,,,Rat
+Agilent Mouse oligonucleotide microarrays,Agilent,agilent_wholegenome,,,,Mouse
+Agilent Array (custom),Agilent,,,,,
+Agilent WholeGenome 4x44k v1,Agilent,efg_agilent_wholegenome_4x44k_v1,Agilent WholeGenome 4x44k v1 probe ID(s) [e.g. A_32_P196615],,,Human
+Agilent WholeGenome 4x44k v2,Agilent,efg_agilent_wholegenome_4x44k_v2,Agilent WholeGenome 4x44k v2 probe ID(s) [e.g. A_33_P3356022],,,Human
+Agilent Sureprint G3 GE 8x60k,Agilent,efg_agilent_sureprint_g3_ge_8x60k,Agilent Sureprint G3 GE 8x60k probe ID(s) [e.g. A_33_P3356022],,,Human
+APPLERA,ABI,,APPLERA_ABI1700,,,Human
+Codelink_Human_Whole_Genome,Codelink,codelink,Codelink Human Whole Genome,,,Human
+CodeLink_UniSet_Human_I_Bioarray,Codelink,codelink,GE CodeLink UniSet Human 20k I Bioarray  ,,,Human
+CodeLink_UniSet_Human_II_Bioarray,Codelink,codelink,GE CodeLink UniSet Human I Bioarray (~10 000 human genes) ,,,Human
+Clontech_Atlas_13K,Clontech,,GE CodeLink Human Whole Genome Bioarray (~55 000 human genes),Clontech BD Atlas Long Oligos Human 13K ,,Human
+human Atlas stress,Clontech,,234 genes related to stress http://www.clontech.com/atlas/genelists/index.shtml,,,Human
+Sigma-Genosys oligonucleotide array,"Compugen, Sigma-Genosys",,,,,
+Illumina HumanWG 6 V1,Illumina,illumina_humanwg_6_v1,"Illumina Sentrix HumanRef-8 or Human-6 version 1, ",[e.g. 0000940471],illuminaHumanv1.db,Human
+Illumina HumanWG 6 V2,Illumina,illumina_humanwg_6_v2,"Illumina Sentrix HumanRef-8 or Human-6 version 2, Illumina HumanWG 6 V2",[e.g. ILMN_1748182],illuminaHumanv2.db,Human
+Illumina HumanWG 6 V3,Illumina,illumina_humanwg_6_v3,"Illumina Sentrix  Human-6 version 3,  Illumina HumanWG 6 v3",[e.g. ILMN_2103362],illuminaHumanv3.db,Human
+Illumina Human HT 12,Illumina,illumina_humanht_12,,[e.g. ILMN_1672925],,Human
+Illumina MouseWG 6 v1,Illumina,illumina_mousewg_6_v1,Illumina MouseWG 6 v1 ,[e.g. ILMN_2483935],,Mouse
+Illumina MouseWG 6 v2,Illumina,illumina_mousewg_6_v2,Illumina MouseWG 6 v2,[e.g. ILMN_1240829],,Mouse
+Illumina Mouse Ref-8 v2,Illumina,,,,,
+Illumina RatRef-12,Illumina,,,,,Rat
+Illumina DASL BeadArray,Illumina,,,,,
+IntelliGene™ HS Human Expression CHIP,IntelliGene/Takara Bio,,http://www.takara-bio.co.jp,,,Human
+IntelliGene Human Cancer CHIP,IntelliGene/Takara Bio,,,,,Human
+Incyte Genomics,Incyte,,,,,
+labonweb_human,labonweb,,,,,Human
+MWG_Human_30K_A,MWG,,,,,Human
+MWG_Human_30K_B,MWG,,,,,Human
+MWG_Human_30K_C,MWG,,,,,Human
+OPERON_HUMANv2,Operon,,,,,Human
+OPERON_HUMANv3,Operon,,,,,Human
+Operon/CapitalBio Corporation 21329,Operon,,,,,
+Research_Genetics,Research_Genetics,,,,,
+RZPD_Human_Ensembl1.1,RZPD,,cDNA Array ,,,Human
+RZPD_Human_ORF_Clones_Gateway,RZPD,,cDNA Array ,,,Human
+RZPD_Human_Unigene3.1,RZPD,,cDNA Array ,,,Human
+TIGR_31K_Human_Set,TIGR,,cDNA Array ,,,Human
+TIGR_40K_Human_Set,TIGR,,cDNA Array ,,,Human
+TIGR_40K_Human_Set_CAG_32x27,TIGR,,cDNA Array ,,,Human
+UCLA_NIH_33K,UCLA,,,,,
+miRBase,,mirbase_id,,miRBase ID(s) [e.g. hsa-mir-27b],,
+miRNA Array,,mirbase_id,,,,
+Custom cDNA Array,,,,,,
+Custom Oligo Array,,,,,,
+N/A,,,,,,
+SeattleSNPs,,,,,,
+RT-PCR,,,,,,
+SAGE,,,,,,
+multiple platforms,,,,,,
+tissue microarray,,,,,,
+RNA-Seq,,,,,,
