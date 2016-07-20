@@ -110,7 +110,6 @@ parseIDs<-function(ids=Sig[,2], identifer=SigCols[2],attributes=c("ensembl_gene_
         "Geneset Specific Statistics"= .parseNULL(ids),
         "Chromosome Map"= .parseNULL(ids))
    return(mapIds)
-
 }
 
 getBMall <- function(attributes, filters = '', values = ids, mart, curl = NULL, checkFilters = TRUE, verbose = FALSE, uniqueRows = TRUE, bmHeader = FALSE, species="human") {
