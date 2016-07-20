@@ -1,20 +1,25 @@
-#######################
+##############################
 ## ParseSignature.R
 ## Script to convert gene identifiers in GeneSigDB tables to Common Gene ID (EntrezGeneID or GeneSymbols)
-## Ali Ahmed  
+## Aedin Culhane & Ali Ahmed
 ## email:ali.ahmed01867@gmail.com
 ## July 12th 2016
-###########################
+##############################
 
 
 
 # Define Variables
-GeneSigDBPath= "~aliahmed/Documents/Stats/GeneSigDB 2"
-GeneSigDBdata = file.path(GeneSigDBPath, "data")
-GeneSigDBsrc = file.path(GeneSigDBPath, "src")
-GeneSigDBData= "/Volumes/gene_signatures/trunk/data/"
+GeneSigDB_ReleaseData= file.path("../gene_signatures/data/")
+GeneSigDBdata = file.path("data")
+GeneSigDBsrc = file.path("R")
+GeneSigRDa ="GeneSigDB.rda"
 
-GeneSigDBFileName= "GeneSigDB-Table 1.csv"
+if (!file.exists(file.path(GeneSigDBdata, GeneSigRDa))){
+  GeneSigDBFileName= "GeneSigDB.xls"
+  GSdb<-readGeneSigDBFile()
+}
+
+
 
 # Load R/Bioc Libs
 library(AnnotationDbi)
@@ -25,12 +30,14 @@ source(file.path(GeneSigDBsrc,"GeneSigDBFunctions.R"))
 ################################################################
 
 # 1. Read in GeneSigDB File.
-GeneSigIndex<-readGeneSigDBFile(GeneSigDBdata,GeneSigDBFileName) 
+load(file.path(GeneSigDBdata, GeneSigRDa))
+GeneSigIndex = GSdb$GeneSigIndex
 
 # 2. Read a Gene Signature File
 #enter in Sig Id that is in the "GeneSigDB-Table 1.csv
-#Sig is 
-sig<-getSig("10582678-Table1",GeneSigIndex)
+#Sig is
+sig<-getSig("10582678-Table1",GeneSigIndex,GeneSigDB_ReleaseData)
+
 ids<-sig[,2]
 
 #Reading a Gene Signature File that Select for something specific()
@@ -42,18 +49,6 @@ ids<-sig[,2]
 require(biomaRt)
 mart<-useMart(dataset="hsapiens_gene_ensembl", biomart="ensembl")
 
-#Rats 
-require(biomaRt)
-mart<-useMart(dataset="rnorvegicus_gene_ensembl", biomart="ensembl")
-listDatasets()
-
-#mouse
-require(biomaRt)
-mart<-useMart(dataset="musculus_gene_ensembl", biomart="ensembl")
-listDatasets()
-
-# List all columns
-attributes(packageDescription("biomaRt"))
 
 #selecting for ("ensembl_gene_id","embl","entrezgene", "hgnc_symbol")
 #keytype= "embyl"
