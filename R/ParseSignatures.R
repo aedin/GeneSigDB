@@ -9,7 +9,7 @@
 
 
 # Define Variables
-GeneSigDB_ReleaseData= file.path("../gene_signatures/data/")
+GeneSigDB_ReleaseData= file.path("../gene_signatures/data")
 GeneSigDBdata = file.path("data")
 GeneSigDBsrc = file.path("R")
 GeneSigRDa ="GeneSigDB.rda"
@@ -18,8 +18,6 @@ if (!file.exists(file.path(GeneSigDBdata, GeneSigRDa))){
   GeneSigDBFileName= "GeneSigDB.xls"
   GSdb<-readGeneSigDBFile()
 }
-
-
 
 # Load R/Bioc Libs
 library(AnnotationDbi)
@@ -34,32 +32,37 @@ load(file.path(GeneSigDBdata, GeneSigRDa))
 GeneSigIndex = GSdb$GeneSigIndex
 
 # 2. Read a Gene Signature File
-#enter in Sig Id that is in the "GeneSigDB-Table 1.csv
-#Sig is
-sig<-getSig("10582678-Table1",GeneSigIndex,GeneSigDB_ReleaseData)
+# Number of identifiers
+# table(unlist(GeneSigIndex[,colInd]))
+# Clone ID   136
+# EnsEMBL ID    84
+# EntrezGene ID   623
+# GenBank ID  1299
+# Gene Symbol  4745
+# Probe ID  1757
+# Protein ID  29
+# RefSeq ID   738
+# UniGene ID   562
 
-ids<-sig[,2]
-
-#Reading a Gene Signature File that Select for something specific()
-
-# 3. Map Genes
-
-## Biomart:
-#homo sapiens
-require(biomaRt)
-mart<-useMart(dataset="hsapiens_gene_ensembl", biomart="ensembl")
+#mapIDs=c("Clone ID", "EnsEMBL ID", "EntrezGene ID","GenBank ID", "Gene Symbol", "Probe ID", "Protein ID", "RefSeq ID", "UniGene ID")
+mapIDs=c( "EnsEMBL ID", "EntrezGene ID","GenBank ID", "Gene Symbol")
 
 
-#selecting for ("ensembl_gene_id","embl","entrezgene", "hgnc_symbol")
-#keytype= "embyl"
-biomaRt::select(mart, keys=ids, columns=c("ensembl_gene_id","embl","entrezgene", "hgnc_symbol"), keytype="embl")
-getBM(attributes= c("ensembl_gene_id", 	"entrezgene", "hgnc_symbol"), values=ids, filters="embl", mart)
+sigID=GeneSigIndex$SigID[3]
 
-# Using Annotation dbi
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-require(org.Hs.eg.db)
-columns(org.Hs.eg.db)
-#Annotation DBi, you are selecting for Accession numbers, ensembl id, entrezid, symbol
-#keytype is Accession Number
-AnnotationDbi::select(org.Hs.eg.db, keys = ids, columns= c("ACCNUM","ENSEMBL"  ,"ENTREZID", "SYMBOL" ), keytype = "ACCNUM")
 
+#mappedSig<-mapSig(sigID,GeneSigIndex,GeneSigDB_ReleaseData, attributes=c("ensembl_gene_id", "hgnc_symbol", "entrezgene"), species="human", verbose=TRUE)
+
+
+res<-lapply(GeneSigIndex$SigID ,function(sigID) mapSig(sigID,GeneSigIndex,GeneSigDB_ReleaseData, attributes=c("ensembl_gene_id", "hgnc_symbol", "entrezgene"), species="human"))
+
+save(res, file="testing.rda")
+
+# # Using Annotation dbi
+# library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+# require(org.Hs.eg.db)
+# columns(org.Hs.eg.db)
+# #Annotation DBi, you are selecting for Accession numbers, ensembl id, entrezid, symbol
+# #keytype is Accession Number
+# AnnotationDbi::select(org.Hs.eg.db, keys = ids, columns= c("ACCNUM","ENSEMBL"  ,"ENTREZID", "SYMBOL" ), keytype = "ACCNUM")
+#

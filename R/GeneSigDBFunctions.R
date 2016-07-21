@@ -20,9 +20,20 @@ readGeneSigDBFile <- function(GeneSigDBPath="data",GeneSigDBFileName="GeneSigDB.
 }
 
 
-getSig<- function(SigID,GeneSigIndex, GeneSigDB_ReleaseData,...)
+#' Title
+#'
+#' @param SigID GeneSigDB id eg "10582678-Table1"
+#' @param GeneSigIndex GeneSigDB data.frame obtained from load()
+#' @param GeneSigDB_ReleaseData Where the raw data files exists, "../gene_signatures/data/"
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
+getSig<- function(SigID,GeneSigIndex, GeneSigDB_ReleaseData="../gene_signatures/data/",...)
   {
-# Example SigID = "10582678-Table1"
+
 
 # To call this function (executing it)
 # getSig(SigID,GeneSigDB_ReleaseData=GeneSigDB_ReleaseData)
@@ -32,47 +43,51 @@ getSig<- function(SigID,GeneSigIndex, GeneSigDB_ReleaseData,...)
 # It turns a data.frame of the signature
 
   rowInd= GeneSigIndex$SigID%in%SigID
-  print(table(rowInd))
+  #print(table(rowInd))
 
   SigFilePath=file.path(GeneSigDB_ReleaseData,GeneSigIndex$Release[rowInd], GeneSigIndex$PMID[rowInd], GeneSigIndex$FileAssociated[rowInd])
   print(SigFilePath)
 
 
   if(file.exists(SigFilePath)) {
-    Sig<- read.table(SigFilePath, header=TRUE, sep="\t", as.is=TRUE)
+    Sig<- read.table(SigFilePath, header=TRUE, sep="\t", as.is=TRUE, comment.char="", check.names = FALSE)
     return(Sig)
   } else print(paste("Can't read in", SigID, "file in", SigFilePath))
   #check Data
 }
 
-######################################################
 
-parseSigCols<-function(SigID, GeneSigIndex,...) {
-## Extract Cols from Sig
 
+#' Title Extract List of Cols from Sig
 # GeneSigIndex is the GeneSigdb.xls file read using readGeneSigDBFile(GeneSigDBPath,GeneSigDBFileName)
-# It turns a data.frame of the signature
+#'
+#' @param sigID a GeneSigDB ID, eg "10821843-Table1"
+#' @param GeneSigIndex
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' parseSigCols("10821843-Table1",GeneSigIndex)
+parseSigCols<-function(sigID, GeneSigIndex, mappingColsOnly=TRUE, verbose=FALSE,...) {
+  #mapIDs=c("Clone ID", "EnsEMBL ID", "EntrezGene ID","GenBank ID", "Gene Symbol", "Probe ID", "Protein ID", "RefSeq ID", "UniGene ID")
+  mapIDs=c( "EnsEMBL ID", "EntrezGene ID","GenBank ID", "Gene Symbol")
 
-  rowInd= GeneSigIndex$SigID%in%SigID
-# Get cols
+  rowInd= GeneSigIndex$SigID%in%sigID
   colInd=grep("^Column\\d+", colnames(GeneSigIndex))
+  sigCols= GeneSigIndex[rowInd, colInd]
+  sigCols<- sigCols[!c(is.na(sigCols)| sigCols=="")]
 
-  # Number of identifiers
-  # table(unlist(GeneSigIndex[,colInd]))
-  # Clone ID   136
-  # EnsEMBL ID    84
-  # EntrezGene ID   623
-  # GenBank ID  1299
-  # Gene Symbol  4745
-  # Probe ID  1757
-  # Protein ID  29
-  # RefSeq ID   738
-  # UniGene ID   562
+  if(mappingColsOnly) {sigCols=sigCols[sigCols%in%mapIDs]}
 
-  SigCols= GeneSigIndex[rowInd, colInd]
-  SigCols<- SigCols[!c(is.na(SigCols)| SigCols=="")]
-
-
+  if (length(sigCols)<1) {
+    print("No Mappable Cols Found")
+    return(NULL)
+  } else {
+    sigInd= as.numeric(sub("Column", "", names(sigCols)))
+    names(sigInd)= sigCols
+    return(sigInd)}
 }
 
 #' Function to convert identifiers
@@ -89,16 +104,16 @@ parseSigCols<-function(SigID, GeneSigIndex,...) {
 #' mart=getMart("human")
 #' parseIDs(ids, Identifer="Gene Symbol")
 #'
-parseIDs<-function(ids=Sig[,2], identifer=SigCols[2],attributes=c("ensembl_gene_id", "embl", "entrezgene"), ...) {
+parseIDs<-function(ids=Sig[,2], identifer=SigCols[2],attributes=c("ensembl_gene_id", "hgnc_symbol", "entrezgene"), species="human",...) {
     identifer<-as.character(identifer)
     print(identifer)
     mapIds<-switch(identifer,
        "Clone ID"=parseCloneID(ids),
-       "EnsEMBL ID"= getBMall(attributes, filters="ensembl_gene_id",filters=ids, species=species),
-       "GenBank ID"= getBMall(attributes, filters="embl",filters=ids, species=species),
-       "Gene Symbol"= getBMall(attributes, filters="hgnc_symbol",filters=ids, species=species),
-       "EntrezGene ID"= getBMall(attributes, filters="entrezgene",filters=ids, species=species),
-       "UniGene ID"= getBMall(attributes, filters="unigene",filters=ids, species=species),
+       "EnsEMBL ID"= getBMall(values=ids, filters="ensembl_gene_id", attributes,species=species),
+       "GenBank ID"= getBMall(values=ids, filters="embl", attributes, species=species),
+       "Gene Symbol"= parseGeneSymbol(values=ids, filters="hgnc_symbol", attributes=attributes, species=species),
+       "EntrezGene ID"= getBMall(values=ids, filters="entrezgene", attributes, species=species),
+       "UniGene ID"= getBMall(values=ids, filters="unigene", attributes, species=species),
        "miRBase"= parsemiRBase(ids),
        "Protein ID"= parseProteinID(ids),
        "RefSeq ID"= parseRedSeqID(ids),
@@ -112,14 +127,36 @@ parseIDs<-function(ids=Sig[,2], identifer=SigCols[2],attributes=c("ensembl_gene_
    return(mapIds)
 }
 
-getBMall <- function(attributes, filters = '', values = ids, mart, curl = NULL, checkFilters = TRUE, verbose = FALSE, uniqueRows = TRUE, bmHeader = FALSE, species="human") {
+#' Title
+#'
+#' @param values Values of the filter, e.g. vector of affy IDs. If multiple filters are specified then the argument should be a list of vectors of which the position of each vector corresponds to the position of the filters in the filters argument.
+#' @param filters Filters (one or more) that should be used in the query. A possible list of filters can be retrieved using the function listFilters.
+#' @param attributes Attributes you want to retrieve. A possible list of attributes can be retrieved using the function listAttributes.
+#' @param mart object of class Mart, created with the useMart function.
+#' @param curl An optional 'CURLHandle' object, that can be used to speed up getBM when used in a loop.
+#' @param checkFilters Sometimes attributes where a value needs to be specified, for example upstream\_flank with value 20 for obtaining upstream sequence flank regions of length 20bp, are treated as filters in BioMarts. To enable such a query to work, one must specify the attribute as a filter and set checkFilters = FALSE for the query to work.
+#' @param verbose When using biomaRt in webservice mode and setting verbose to TRUE, the XML query to the webservice will be printed.
+#' @param uniqueRows if the result of a query contains multiple identical rows, setting this argument to TRUE (default) will result in deleting the duplicated rows in the query result at the server side.
+#' @param bmHeader Boolean to indicate if the result retrieved from the BioMart server should include the data headers or not, defaults to FALSE. This should only be switched on if the default behavior results in errors, setting to on might still be able to retrieve your data in that case
+#' @param species Use to obtain mart, human, mouse, rat
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' ids=c("AA486072" ,"J02931" , "AA478436")
+#' getBMall(values=ids, filters= "embl", attributes=c("ensembl_gene_id", "embl", "entrezgene"))
+#'
+getBMall <- function(values = ids,filters = '', attributes=c("ensembl_gene_id", "hgnc_symbol","entrezgene"),  mart, curl = NULL, checkFilters = TRUE, verbose = FALSE, uniqueRows = TRUE, bmHeader = FALSE, species="human") {
+
   mart<-getMart(species)
-  idMatch <- getBM(attributes, filters, values, mart, curl, checkFilters, verbose, uniqueRows, bmHeader)
-  #print(idMatch)
+  attributes <- unique(c(c("ensembl_gene_id", "hgnc_symbol","entrezgene"), filters[1]))
+  idMatch <- getBM(attributes, c(filters, "transcript_appris"), list(values,TRUE), mart, curl, checkFilters, verbose, uniqueRows, bmHeader)
+  if(verbose) print(idMatch)
   x <- as.data.frame(values, stringsAsFactors =FALSE)
   colnames(x) <- filters
-  #print(x)
-  structure(dplyr::left_join(x = x, y = idMatch, by = filters, copy=TRUE))
+  if (verbose) print(x)
+  structure(dplyr::left_join(x = x, y = idMatch, by = filters[1], copy=TRUE))
 }
 
 parseCloneID<-function() {
@@ -139,6 +176,13 @@ parseGenBankID<-function(ids, biomart=TRUE, species="human") {
     return(mapping)
   }
   }
+
+
+parseGeneSymbol<-function(values=ids, filters="hgnc_symbol", ...){
+   sym = data.frame(cbind(orig_sym=values, hgnc_symbol=AnnotationDbi::mapIds(org.Hs.eg.db, keys = values, column= "SYMBOL", keytype = "ALIAS")))
+   mm<- getBMall(values=sym$hgnc_symbol, filters="hgnc_symbol", attributes, species)
+   structure(dplyr::left_join(x = sym, y = mm, by = filters, copy=TRUE))
+}
 
 
 
@@ -203,6 +247,52 @@ parseProbeID<-function(ids, biomart=TRUE) {
 }
 
 
+mergeID <- function(mylist,n=NULL){
+    if(!is.null(n)) {
+      x<-sapply(mylist, function(x)x[,n])
+    }
+ #  print(x)
+
+    res <- apply(x, 1, function(rr){
+        rr<-unique(rr)
+        rr<-rr[!is.na(rr)]
+        if (length(rr)>1) paste(rr, collapse = "|")
+        return(rr)})
+
+
+  return(res)
+}
+
+
+mapSig<-function(sigID,GeneSigIndex,GeneSigDB_ReleaseData, attributes=c("ensembl_gene_id", "hgnc_symbol", "entrezgene"), species="human", verbose=FALSE, ...){
+
+  sig <- getSig(sigID,GeneSigIndex,GeneSigDB_ReleaseData)
+  if(verbose) print(head(sig))
+  sigCols <- parseSigCols(sigID, GeneSigIndex,verbose=verbose)
+  if(verbose) print(sigCols)
+
+  if(is.null(sigCols)) warning(paste("No mappable Columns in ", sigID))
+
+  if(!is.null(sigCols)){
+  # Map Genes
+  xx<-lapply(seq_along(sigCols) ,function(i) parseIDs(ids = sig[, sigCols[i]], identifer = names(sigCols)[i], attributes=attributes,verbose=TRUE))
+
+
+  cols=unique(unlist(sapply(xx, colnames)))
+  mapped_orig<-do.call(cbind,lapply(xx, function(g) g[,colnames(g)[!colnames(g)%in%attributes], drop=FALSE]))
+#  print(mapped_orig)
+
+  colnames(mapped_orig) = paste0(colnames(sig)[sigCols], "_orig")
+  mapped_IDs<-sapply(attributes, function(i) mergeID( xx, i))
+  #print(mapped_IDs)
+  mapping<-cbind( mapped_orig,mapped_IDs)
+
+  return(mapping)
+  }
+
+}
+
+
 #' Function to define biomart Mart dataset
 #'
 #' @param species is character, human, mouse, rat or chicken. Default is human
@@ -230,9 +320,10 @@ getMart <- function(species="human", verbose=TRUE){
     require(biomaRt)
     if (is.na(dataset)) stop("Can't intepret 'species' parameter, should be human, mouse, rat, or chicken")
 
-    if (exists("mart") & dataset == mart@dataset & verbose){
-      print(paste("mart of", dataset, "exists in your workspace"))
-      } else {
+    if (exists("mart")) {
+      if(dataset == mart@dataset & verbose){
+          print(paste("mart of", dataset, "exists in your workspace"))
+      }} else {
       mart <- useMart("ENSEMBL_MART_ENSEMBL", dataset)
     }
     return(mart)
