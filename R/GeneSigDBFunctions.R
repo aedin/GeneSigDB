@@ -306,28 +306,43 @@ mapSig<-function(sigID,GeneSigIndex,GeneSigDB_ReleaseData, attributes=c("ensembl
 #' class(mart)
 #' mart<- getMart("duck")
 #'
-getMart <- function(species="human", verbose=TRUE){
-  species = tolower(species)
-  dataset = switch(species,
-          "mouse" = "mmusculus_gene_ensembl",
-          "human" = "hsapiens_gene_ensembl",
-          "hsapiens" = "hsapiens_gene_ensembl",
-          "chicken" = "ggallus_gene_ensembl",
-          "chick" = "ggallus_gene_ensembl",
-          "rat" = "rnorvegicus_gene_ensembl",
-           NA
-  )
+function(species="human", verbose=TRUE){
+    species = tolower(species)
+    dataset = switch(species,
+                     "mouse" = "mmusculus_gene_ensembl",
+                     "human" = "hsapiens_gene_ensembl",
+                     "hsapiens" = "hsapiens_gene_ensembl",
+                     "chicken" = "ggallus_gene_ensembl",
+                     "chick" = "ggallus_gene_ensembl",
+                     "rat" = "rnorvegicus_gene_ensembl",
+                     "Error"
+    )
+    if (dataset=="Error") {
+        print(paste("Can't intepret", species,   "parameter, should be human, mouse, rat, or chicken"))
+        if (exists("mart"))  return(mart)
+    } 
+    
+    #print(dataset)
+    
     require(biomaRt)
-    if (is.na(dataset)) stop("Can't intepret 'species' parameter, should be human, mouse, rat, or chicken")
 
     if (exists("mart")) {
-      if(dataset == mart@dataset & verbose){
-          print(paste("mart of", dataset, "exists in your workspace"))
-      }} else {
-      mart <- useMart("ENSEMBL_MART_ENSEMBL", dataset)
-    }
-    return(mart)
-  }
+        if (inherits(mart, "Mart")){
+            if (dataset == mart@dataset & verbose){
+                print(paste("mart of", dataset, "exists in your workspace"))
+                return(mart)
+            }
+        }
+    } 
+    
+    if(!dataset=="Error") {
+            print(paste("Obtaining mart", dataset))
+            mart <- useMart("ENSEMBL_MART_ENSEMBL", dataset)
+            return(mart)
+        }
+    
+}
+
 
 
 
