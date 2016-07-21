@@ -306,7 +306,7 @@ mapSig<-function(sigID,GeneSigIndex,GeneSigDB_ReleaseData, attributes=c("ensembl
 #' class(mart)
 #' mart<- getMart("duck")
 #'
-function(species="human", verbose=TRUE){
+getMart <- function(species="human", verbose=TRUE){
     species = tolower(species)
     dataset = switch(species,
                      "mouse" = "mmusculus_gene_ensembl",
