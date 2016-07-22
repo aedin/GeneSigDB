@@ -16,16 +16,22 @@ GeneSigDBdata = file.path("data")
 GeneSigDBsrc = file.path("R")
 GeneSigRDa ="GeneSigDB.rda"
 
-if (!file.exists(file.path(GeneSigDBdata, GeneSigRDa))){
-  GeneSigDBFileName= "GeneSigDB.xls"
-  GSdb<-readGeneSigDBFile()
-}
-
 # Load R/Bioc Libs
 library(AnnotationDbi)
 library(biomaRt)
 #library(annotate)
 source(file.path(GeneSigDBsrc,"GeneSigDBFunctions.R"))
+
+###########
+
+# Read GeneSigDB file
+
+if (!file.exists(file.path(GeneSigDBdata, GeneSigRDa))){
+  GeneSigDBFileName= "GeneSigDB.xls"
+  GSdb<-readGeneSigDBFile()
+}
+
+
 
 ################################################################
 
