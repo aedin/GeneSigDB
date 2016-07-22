@@ -153,6 +153,8 @@ getBMall <- function(values = ids,filters = '', attributes=c("ensembl_gene_id", 
   attributes <- unique(c(c("ensembl_gene_id", "hgnc_symbol","entrezgene"), filters[1]))
   idMatch <- getBM(attributes, c(filters, "transcript_appris"), list(values,TRUE), mart, curl, checkFilters, verbose, uniqueRows, bmHeader)
   if(verbose) print(idMatch)
+  print(idMatch)
+  print(values)
   x <- as.data.frame(values, stringsAsFactors =FALSE)
   colnames(x) <- filters
   if (verbose) print(x)

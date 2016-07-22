@@ -8,8 +8,10 @@
 
 
 
-# Define Variables
+# Define where the raw Sigs are (gene_signatures)
 GeneSigDB_ReleaseData= file.path("../gene_signatures/data")
+
+# Don't edit.. GeneSigDB repository
 GeneSigDBdata = file.path("data")
 GeneSigDBsrc = file.path("R")
 GeneSigRDa ="GeneSigDB.rda"
@@ -48,13 +50,17 @@ GeneSigIndex = GSdb$GeneSigIndex
 mapIDs=c( "EnsEMBL ID", "EntrezGene ID","GenBank ID", "Gene Symbol")
 
 
-sigID=GeneSigIndex$SigID[3]
+sigID=GeneSigIndex$SigID[13]
 
 
-#mappedSig<-mapSig(sigID,GeneSigIndex,GeneSigDB_ReleaseData, attributes=c("ensembl_gene_id", "hgnc_symbol", "entrezgene"), species="human", verbose=TRUE)
+mappedSig<-mapSig(sigID,GeneSigIndex,GeneSigDB_ReleaseData, attributes=c("ensembl_gene_id", "hgnc_symbol", "entrezgene"), species="human", verbose=TRUE)
 
 
-res<-lapply(GeneSigIndex$SigID ,function(sigID) mapSig(sigID,GeneSigIndex,GeneSigDB_ReleaseData, attributes=c("ensembl_gene_id", "hgnc_symbol", "entrezgene"), species="human"))
+res<-lapply(seq_along(GeneSigIndex$SigID),function(i){
+  print(i)
+  sigID= GeneSigIndex$SigID[i]
+  mapSig(sigID,GeneSigIndex,GeneSigDB_ReleaseData, attributes=c("ensembl_gene_id", "hgnc_symbol", "entrezgene"), species="human")
+  })
 
 save(res, file="testing.rda")
 
