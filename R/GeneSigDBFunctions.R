@@ -3,7 +3,7 @@
 #################################
 
 
-readGeneSigDBFile <- function(GeneSigDBPath="data",GeneSigDBFileName="GeneSigDB.xls") {
+readGeneSigDBFile <- function(GeneSigDBPath="data",GeneSigDBFileName="GeneSigDB_Working.xlsx") {
   # Function to Read Gene SigDB File(shows the entire GeneSigDB)
   # To call this function type: readGeneSigDBFile(GeneSigDBdata,GeneSigDBFileName)
   SigFile <- file.path(GeneSigDBdata, GeneSigDBFileName)
@@ -31,7 +31,7 @@ readGeneSigDBFile <- function(GeneSigDBPath="data",GeneSigDBFileName="GeneSigDB.
 #' @export
 #'
 #' @examples
-getSig<- function(SigID,GeneSigIndex, GeneSigDB_ReleaseData="../gene_signatures/data/",...)
+getSig<- function(SigID,GeneSigIndex, GeneSigDB_ReleaseData="/Users/aliahmed/Documents/Stats/gene_signatures/data",...)
   {
 
 
@@ -50,7 +50,8 @@ getSig<- function(SigID,GeneSigIndex, GeneSigDB_ReleaseData="../gene_signatures/
 
 
   if(file.exists(SigFilePath)) {
-    Sig<- read.table(SigFilePath, header=TRUE, sep="\t", as.is=TRUE, comment.char="", check.names = FALSE)
+    #Sig<- read.table(SigFilePath, header=TRUE, sep="\t", as.is=TRUE, comment.char="", check.names = FALSE)
+    Sig <- as.data.frame(readr::read_tsv(SigFilePath))
     return(Sig)
   } else print(paste("Can't read in", SigID, "file in", SigFilePath))
   #check Data
